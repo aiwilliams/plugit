@@ -12,6 +12,10 @@ module Plugit
       yield self if block_given?
     end
     
+    def after_update(&block)
+      @after_update = block
+    end
+    
     def checkout(target_path)
       FileUtils.mkdir_p(target_path)
       `#{scm_export_command} #{target_path}`
@@ -27,6 +31,7 @@ module Plugit
       if !File.directory?(target_path) || force
         FileUtils.rm_rf(target_path)
         checkout(target_path)
+        instance_eval(&@after_update) if @after_update
       end
     end
     

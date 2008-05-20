@@ -1,10 +1,20 @@
 = plugit
 
-* FIX (url)
+* http://github.com/aiwilliams/plugit
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Having written a number of libraries, I have found that many of them depend on other libraries.
+Often, those other libraries have multiple revisions and the people who use my libraries want
+my libraries to work with all revisions of those other libraries. This can get hard to manage!
+
+The goal of plugit is to make it easy to construct library environments within which you can
+run tests, to show that your code works in more than just one environment. It also allows you
+to keep from having copies of those libraries checked into your own repository. If they are
+available for others to download, and you expect that they will, then you should have no problem
+depending on them being available to you for future download, either!
+
+This may all only prove useful to Rails plugin developers ;)
 
 == FEATURES/PROBLEMS:
 
@@ -12,15 +22,18 @@ FIX (describe your package)
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+Plugit.describe do |mything|
+  mything.environment :default, 'The one we want everyone using' do |env|
+    env.library :example, '1.0', "cp -R #{File.dirname(__FILE__)}/../../../repositories/example/*"
+    env.library :another, '2.0', "svn co http://something.com/svn/ALibrary"
+  end
+end
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
-
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+sudo gem install plugit --source=http://gems.github.com
 
 == LICENSE:
 

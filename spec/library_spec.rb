@@ -67,8 +67,18 @@ describe Plugit::Library do
   end
   
   describe 'Environment updating' do
+    before do
+      @library.stub!(:checkout)
+    end
+    
     it 'should check out into the environment root path' do
       @library.should_receive(:checkout).with(@target_path)
+      @library.update(@environment)
+    end
+    
+    it 'should invoke after_update block against library instance' do
+      @library.after_update { call_from_update }
+      @library.should_receive(:call_from_update)
       @library.update(@environment)
     end
     

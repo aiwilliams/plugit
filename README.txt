@@ -29,6 +29,9 @@ Plugit.describe do |mything|
   end
 end
 
+The :default environment is loaded unless you specify otherwise through ENV['PLUGIT_ENV']. This is necessary since you will be
+running your specs from Rakefile, which will load independent processes for each environment you want to run.
+
 == REQUIREMENTS:
 
 == INSTALL:

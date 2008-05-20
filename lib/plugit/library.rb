@@ -20,7 +20,9 @@ module Plugit
     
     def checkout(target_path)
       mkdir_p(target_path)
-      `#{scm_export_command} #{target_path}`
+      command = "#{scm_export_command} #{target_path}"
+      puts "Checking out #{name}: #{command}"
+      `#{command}`
     end
     
     def install(environment)

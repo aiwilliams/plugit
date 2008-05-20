@@ -2,6 +2,8 @@ require 'fileutils'
 
 module Plugit
   class Library
+    include FileUtils
+    
     attr_accessor :load_paths, :requires
     attr_reader   :name, :version, :scm_export_command
     
@@ -17,7 +19,7 @@ module Plugit
     end
     
     def checkout(target_path)
-      FileUtils.mkdir_p(target_path)
+      mkdir_p(target_path)
       `#{scm_export_command} #{target_path}`
     end
     
@@ -29,9 +31,11 @@ module Plugit
     def update(environment, force = false)
       target_path = self.target_path(environment)
       if !File.directory?(target_path) || force
-        FileUtils.rm_rf(target_path)
+        rm_rf(target_path)
         checkout(target_path)
-        instance_eval(&@after_update) if @after_update
+        cd(target_path) do
+          instance_eval(&@after_update)
+        end if @after_update
       end
     end
     

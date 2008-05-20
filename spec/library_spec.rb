@@ -69,6 +69,8 @@ describe Plugit::Library do
   describe 'Environment updating' do
     before do
       @library.stub!(:checkout)
+      @library.stub!(:cd)
+      @library.stub!(:rm_rf)
     end
     
     it 'should check out into the environment root path' do
@@ -76,10 +78,19 @@ describe Plugit::Library do
       @library.update(@environment)
     end
     
-    it 'should invoke after_update block against library instance' do
+    it 'should invoke after_update block against library instance, in target directory' do
+      class << @library
+        attr_reader :cdpath
+        def cd(cdpath)
+          @cdpath = cdpath
+          yield
+        end
+      end
+      
       @library.after_update { call_from_update }
       @library.should_receive(:call_from_update)
       @library.update(@environment)
+      @library.cdpath.should == @target_path
     end
     
     describe 'where library is already checked out' do
@@ -93,7 +104,7 @@ describe Plugit::Library do
       end
       
       it 'should update if forced' do
-        FileUtils.should_receive(:rm_rf).with(@target_path)
+        @library.should_receive(:rm_rf).with(@target_path)
         @library.should_receive(:checkout).with(@target_path)
         @library.update(@environment, true)
       end

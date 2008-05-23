@@ -19,7 +19,6 @@ module Plugit
     end
     
     def checkout(target_path)
-      mkdir_p(target_path)
       command = "#{scm_export_command} #{target_path}"
       puts "Checking out #{name}: #{command}"
       `#{command}`
@@ -32,6 +31,7 @@ module Plugit
     
     def update(environment, force = false)
       target_path = self.target_path(environment)
+      mkdir_p(File.dirname(target_path))
       if !File.directory?(target_path) || force
         rm_rf(target_path)
         checkout(target_path)

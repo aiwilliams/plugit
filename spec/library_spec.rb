@@ -71,6 +71,12 @@ describe Plugit::Library do
       @library.stub!(:checkout)
       @library.stub!(:cd)
       @library.stub!(:rm_rf)
+      @library.stub!(:mkdir_p)
+    end
+    
+    it 'should create the parent directory where the library will be exported into' do
+      @library.should_receive(:mkdir_p).with(File.dirname(@target_path))
+      @library.update(@environment)
     end
     
     it 'should check out into the environment root path' do

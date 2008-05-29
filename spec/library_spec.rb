@@ -57,10 +57,11 @@ describe Plugit::Library do
   
   describe 'Environment installing' do
     it 'should add it\'s load path, then make all requires' do
-      @library.requires = ['/some/thing']
+      @library.requires = ['/some/thing', '/else']
       @library.load_paths = ['/some/where']
       $LOAD_PATH.should_receive(:<<).with(@target_path + '/some/where')
       Object.should_receive(:require).with('/some/thing')
+      Object.should_receive(:require).with('/else')
       @library.install(@environment)
     end
   end

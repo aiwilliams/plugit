@@ -9,6 +9,6 @@ module Plugit
     block.call(descriptor)
     descriptor.install_environment(ENV['PLUGIT_ENV'])
   rescue UndefinedEnvironmentError
-    puts "No environment named '#{ENV['PLUGIT_ENV']}'. Use one of #{descriptor.environments.collect {|e| e.name}}."
+    puts %Q{No environment named "#{ENV['PLUGIT_ENV']}". Use one of #{descriptor.environments.collect {|e| e.name.to_s}.inspect}.}
   end
 end

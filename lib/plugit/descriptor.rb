@@ -1,18 +1,19 @@
 module Plugit
   class Descriptor
-    attr_writer :library_root_path
+    attr_writer :environments_root_path
     
     def initialize
       @environments = []
     end
     
     def environment(*init_args, &block)
+      init_args << File.expand_path(@environments_root_path || 'environments')
       @environments << (env = Environment.new(*init_args))
       block.call(EnvironmentBuilder.new(env))
+      env
     end
     
     def install_environment(name)
-      Environment.library_root_path = @library_root_path || File.expand_path('environments')
       env = @environments.detect {|e| e.name == name.to_sym}
       env.libraries.each do |lib|
         lib.update(env)
@@ -26,8 +27,8 @@ module Plugit
       @env = env
     end
     
-    def library(*init_args)
-      @env.add_library(Library.new(*init_args))
+    def library(*init_args, &block)
+      @env.add_library(Library.new(*init_args, &block))
     end
   end
 end

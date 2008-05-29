@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Plugit::Environment do
   before do
-    @environment = Plugit::Environment.new(:standard, 'Example of environment')
+    @environment = Plugit::Environment.new(:standard, 'Example of environment', '/some/root/path')
   end
   
   it 'should answer the name' do
@@ -13,14 +13,7 @@ describe Plugit::Environment do
     @environment.description.should == 'Example of environment'
   end
   
-  it 'should tell us to configure Environment.library_root_path' do
-    lambda do
-      @environment.library_root_path
-    end.should raise_error(Plugit::Environment::UninitializedRootError)
-  end
-  
-  it 'should answer the library root path relative Environment.library_root_path' do
-    Plugit::Environment.library_root_path = '/some/root/path'
+  it 'should answer the library root path relative to given environment root path' do
     @environment.library_root_path.should == '/some/root/path/standard'
   end
   

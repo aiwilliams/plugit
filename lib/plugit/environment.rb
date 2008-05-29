@@ -1,15 +1,9 @@
 module Plugit
   class Environment
-    class UninitializedRootError < StandardError; end
-    
-    class << self
-      attr_accessor :library_root_path
-    end
-    
     attr_reader :name, :description
     
-    def initialize(name, description)
-      @name, @description = name, description
+    def initialize(name, description, root_path)
+      @name, @description, @root_path = name, description, root_path
       @libraries = []
     end
     
@@ -22,9 +16,7 @@ module Plugit
     end
     
     def library_root_path
-      root_path = self.class.library_root_path
-      raise UninitializedRootError unless root_path
-      File.join(root_path, name.to_s)
+      File.join(@root_path, name.to_s)
     end
   end
 end

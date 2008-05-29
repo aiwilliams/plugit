@@ -13,9 +13,8 @@ end
 describe Plugit::Library do
   before do
     @library = Plugit::Library.new(:activerecord, '2.0.2', 'svn export http://blah')
-    @environment = Plugit::Environment.new(:standard, 'For testing libraries')
-    @environment.stub!(:library_root_path).and_return('/some/root')
-    @target_path = '/some/root/activerecord/2.0.2'
+    @environment = Plugit::Environment.new(:standard, 'For testing libraries', '/some/root')
+    @target_path = '/some/root/standard/activerecord/2.0.2'
   end
   
   it 'should answer the name' do

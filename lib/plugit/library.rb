@@ -25,10 +25,8 @@ module Plugit
     end
     
     def install(environment)
-      load_paths.each { |l| $LOAD_PATH << File.join(target_path(environment), l) }
-      requires.each do |req|
-        Object.send :require, req
-      end unless requires.empty?
+      load_paths.each { |l| $LOAD_PATH.unshift File.join(target_path(environment), l) }
+      requires.each { |r| Object.send :require, r }
     end
     
     def update(environment, force = false)

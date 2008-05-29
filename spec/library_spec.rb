@@ -56,10 +56,19 @@ describe Plugit::Library do
   end
   
   describe 'Environment installing' do
-    it 'should add it\'s load path, then make all requires' do
+    before do
       @library.requires = ['/some/thing', '/else']
       @library.load_paths = ['/some/where']
-      $LOAD_PATH.should_receive(:<<).with(@target_path + '/some/where')
+      $LOAD_PATH.stub!(:unshift)
+      Object.stub!(:require)
+    end
+    
+    it 'should add it\'s load paths to the front of the load path to get in front of rubygems' do
+      $LOAD_PATH.should_receive(:unshift).with(@target_path + '/some/where')
+      @library.install(@environment)
+    end
+    
+    it 'should require each of the library requires' do
       Object.should_receive(:require).with('/some/thing')
       Object.should_receive(:require).with('/else')
       @library.install(@environment)

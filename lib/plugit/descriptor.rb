@@ -1,4 +1,6 @@
 module Plugit
+  class UndefinedEnvironmentError < StandardError; end
+  
   class Descriptor
     attr_writer :environments_root_path
     
@@ -13,8 +15,13 @@ module Plugit
       env
     end
     
+    def environments
+      @environments.dup
+    end
+    
     def install_environment(name)
       env = @environments.detect {|e| e.name == name.to_sym}
+      raise UndefinedEnvironmentError.new(name) unless env
       env.libraries.each do |lib|
         lib.update(env)
         lib.install(env)

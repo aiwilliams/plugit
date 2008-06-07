@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Plugit::Library, 'creation api' do
   it 'should allow us to pass a block that receives the library for easy configuration' do
     lib_in_block = nil
-    lib = Plugit::Library.new(:activerecord, '2.0.2', 'svn export http://blah') do |lib|
+    lib = Plugit::Library.new(:activerecord) do |lib|
       lib_in_block = lib
     end
     lib_in_block.should equal(lib)
@@ -12,7 +12,7 @@ end
 
 describe Plugit::Library do
   before do
-    @library = Plugit::Library.new(:activerecord, '2.0.2', 'svn export http://blah')
+    @library = Plugit::Library.new(:activerecord, :version => '2.0.2', :export => 'svn export http://blah')
     @environment = Plugit::Environment.new(:standard, 'For testing libraries', '/some/root')
     @target_path = '/some/root/standard/activerecord/2.0.2'
   end
@@ -26,7 +26,16 @@ describe Plugit::Library do
   end
   
   it 'should answer the scm export command' do
-    @library.scm_export_command.should == 'svn export http://blah'
+    @library.export.should == 'svn export http://blah'
+  end
+  
+  it 'should be able to assume attributes from another library' do
+    assuming_library = Plugit::Library.new(:assuming, :extends => @library, :version => '2.0.3')
+    assuming_library.name.should == :assuming
+    assuming_library.version.should == '2.0.3'
+    assuming_library.export.should == @library.export
+    assuming_library.load_paths.should == @library.load_paths
+    assuming_library.requires.should == @library.requires
   end
   
   describe 'load paths' do
@@ -73,6 +82,21 @@ describe Plugit::Library do
       Object.should_receive(:require).with('/some/thing')
       Object.should_receive(:require).with('/else')
       @library.install(@environment)
+    end
+    
+    it 'should invoke before_install block against library instance, in target directory' do
+      class << @library
+        attr_reader :cdpath
+        def cd(cdpath)
+          @cdpath = cdpath
+          yield
+        end
+      end
+      
+      @library.before_install { call_from_before_install }
+      @library.should_receive(:call_from_before_install)
+      @library.install(@environment)
+      @library.cdpath.should == @target_path
     end
   end
   

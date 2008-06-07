@@ -26,4 +26,10 @@ describe Plugit::Environment do
   it 'should answer a dup of our libraries so we control what\'s in our list' do
     @environment.libraries.should_not equal(@environment.libraries)
   end
+  
+  it 'should answer a library by name' do
+    library = mock(Plugit::Library, :name => :something)
+    @environment.add_library library
+    @environment[:something].should == library
+  end
 end

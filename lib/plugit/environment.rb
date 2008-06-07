@@ -7,6 +7,10 @@ module Plugit
       @libraries = []
     end
     
+    def [](library_name)
+      @libraries.detect {|l|l.name == library_name}
+    end
+    
     def add_library(library)
       @libraries << library
     end

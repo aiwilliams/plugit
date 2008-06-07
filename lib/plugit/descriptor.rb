@@ -8,6 +8,10 @@ module Plugit
       @environments = []
     end
     
+    def [](env_name)
+      @environments.detect {|e|e.name == env_name}
+    end
+    
     def environment(*init_args, &block)
       init_args << File.expand_path(@environments_root_path || 'environments')
       @environments << (env = Environment.new(*init_args))

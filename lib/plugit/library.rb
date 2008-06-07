@@ -5,12 +5,21 @@ module Plugit
     include FileUtils
     
     attr_accessor :load_paths, :requires
-    attr_reader   :name, :version, :scm_export_command
+    attr_reader   :configuration, :name
     
-    def initialize(name, version, scm_export_command)
-      @name, @version, @scm_export_command = name, version, scm_export_command
-      @load_paths = ['/lib']
-      @requires = []
+    def initialize(name, configuration = {})
+      @name = name
+      @configuration = {}
+      if extending = configuration[:extends]
+        @configuration.update(extending.configuration)
+        @load_paths = extending.load_paths.dup
+        @requires = extending.requires.dup
+      end
+      @configuration.update(configuration)
+      
+      @load_paths ||= ['/lib']
+      @requires ||= []
+      
       yield self if block_given?
     end
     
@@ -18,15 +27,31 @@ module Plugit
       @after_update = block
     end
     
+    def before_install(&block)
+      @before_install = block
+    end
+    
     def checkout(target_path)
-      command = "#{scm_export_command} #{target_path}"
+      command = "#{export} #{target_path}"
       puts "Checking out #{name}: #{command}"
       `#{command}`
     end
     
     def install(environment)
-      load_paths.reverse.each { |l| $LOAD_PATH.unshift File.join(target_path(environment), l) }
+      target_path = self.target_path(environment)
+      cd(target_path) do
+        instance_eval(&@before_install)
+      end if @before_install
+      load_paths.reverse.each { |l| $LOAD_PATH.unshift File.join(target_path, l) }
       requires.each { |r| Object.send :require, r }
+    end
+    
+    def method_missing(method, *args)
+      if value = @configuration[method.to_sym]
+        value
+      else
+        super(method, *args)
+      end
     end
     
     def update(environment, force = false)

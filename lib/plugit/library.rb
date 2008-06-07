@@ -66,6 +66,10 @@ module Plugit
       end
     end
     
+    def version
+      @configuration[:version]
+    end
+    
     protected
       def target_path(environment)
         File.join(environment.library_root_path, name.to_s, version)

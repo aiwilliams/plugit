@@ -21,8 +21,10 @@ describe Plugit::Library do
     @library.name.should == :activerecord
   end
   
-  it 'should answer the version' do
+  it 'should answer the version given, nil if not' do
     @library.version.should == '2.0.2'
+    @library = Plugit::Library.new(:activerecord)
+    @library.version.should be_nil
   end
   
   it 'should answer the scm export command' do

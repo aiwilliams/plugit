@@ -116,6 +116,7 @@ describe Plugit::Library do
       @library.stub!(:cd)
       @library.stub!(:rm_rf)
       @library.stub!(:mkdir_p)
+      @library.stub!(:cp_r)
     end
     
     it 'should create the parent directory where the library will be exported into' do
@@ -141,6 +142,10 @@ describe Plugit::Library do
       @library.should_receive(:call_from_update)
       @library.update(@environment)
       @library.cdpath.should == @target_path
+    end
+    
+    it 'should copy the exported content if export is equal to keep from re-exporting' do
+      pending 'adam not falling asleep'
     end
     
     describe 'where library is already checked out' do

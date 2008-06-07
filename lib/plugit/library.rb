@@ -54,6 +54,12 @@ module Plugit
       end
     end
     
+    def target_path(environment)
+      paths = [environment.library_root_path, name.to_s]
+      paths << version if version
+      File.join(paths)
+    end
+    
     def update(environment, force = false)
       target_path = self.target_path(environment)
       mkdir_p(File.dirname(target_path))
@@ -69,10 +75,5 @@ module Plugit
     def version
       @configuration[:version]
     end
-    
-    protected
-      def target_path(environment)
-        File.join(environment.library_root_path, name.to_s, version)
-      end
   end
 end

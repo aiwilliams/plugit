@@ -21,14 +21,22 @@ describe Plugit::Library do
     @library.name.should == :activerecord
   end
   
-  it 'should answer the version given, nil if not' do
+  it 'should answer the version' do
     @library.version.should == '2.0.2'
-    @library = Plugit::Library.new(:activerecord)
-    @library.version.should be_nil
   end
   
   it 'should answer the scm export command' do
     @library.export.should == 'svn export http://blah'
+  end
+  
+  it 'should answer a target path with environments root, environment name, library name and version' do
+    @library.target_path(@environment).should == @target_path
+  end
+  
+  it 'should answer a target path without a version' do
+    @library = Plugit::Library.new(:activerecord)
+    @library.version.should be_nil
+    @library.target_path(@environment).should == File.dirname(@target_path)
   end
   
   it 'should be able to assume attributes from another library' do

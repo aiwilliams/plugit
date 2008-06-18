@@ -9,14 +9,7 @@ module Plugit
     
     def initialize(name, configuration = {})
       @name = name
-      @configuration = {}
-      if extending = configuration[:extends]
-        @configuration.update(extending.configuration)
-        @load_paths = extending.load_paths.dup
-        @requires = extending.requires.dup
-      end
-      @configuration.update(configuration)
-      
+      @configuration = configuration
       @load_paths ||= ['/lib']
       @requires ||= []
       

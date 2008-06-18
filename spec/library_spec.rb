@@ -39,15 +39,6 @@ describe Plugit::Library do
     @library.target_path(@environment).should == File.dirname(@target_path)
   end
   
-  it 'should be able to assume attributes from another library' do
-    assuming_library = Plugit::Library.new(:assuming, :extends => @library, :version => '2.0.3')
-    assuming_library.name.should == :assuming
-    assuming_library.version.should == '2.0.3'
-    assuming_library.export.should == @library.export
-    assuming_library.load_paths.should == @library.load_paths
-    assuming_library.requires.should == @library.requires
-  end
-  
   describe 'load paths' do
     it 'should allow the addition of paths' do
       @library.load_paths << '/some/path'
@@ -142,10 +133,6 @@ describe Plugit::Library do
       @library.should_receive(:call_from_update)
       @library.update(@environment)
       @library.cdpath.should == @target_path
-    end
-    
-    it 'should copy the exported content if export is equal to keep from re-exporting' do
-      pending 'adam not falling asleep'
     end
     
     describe 'where library is already checked out' do
